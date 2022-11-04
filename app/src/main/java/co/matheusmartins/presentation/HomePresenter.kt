@@ -2,23 +2,28 @@ package co.matheusmartins.presentation
 
 import android.os.Handler
 import android.os.Looper
+import co.matheusmartins.data.CategoryRemoteDataSource
+import co.matheusmartins.data.ListCategoryCallback
 import co.matheusmartins.model.Category
 import co.matheusmartins.view.CategoryItem
 import co.matheusmartins.view.HomeFragment
 import java.net.CacheResponse
 
-class HomePresenter(private val view: HomeFragment) {
+class HomePresenter(
+    private val view: HomeFragment,
+    private val dataSource: CategoryRemoteDataSource = CategoryRemoteDataSource()
+) : ListCategoryCallback {
 
     // VIEW <- PRESENTER
     // PRESENTER <- VIEW
 
     fun findAllCategories() {
         view.showProgress()
-        fakeRequest()
+        dataSource.findAllCategories(this)
     }
 
     // Output (SUCESSO | FALHA | COMPLETE)
-    fun onSuccess(response: List<String>) {
+    override fun onSuccess(response: List<String>) {
 //        val categories = mutableListOf<CategoryItem>()
 //
 //        for (category in response) {
@@ -29,28 +34,12 @@ class HomePresenter(private val view: HomeFragment) {
         view.showCategories(categories)
     }
 
-    fun onError(message: String) {
-        view.showFailure(message)
+    override fun onError(response: String) {
+        view.showFailure(response)
     }
 
-    fun onComplete() {
+    override fun onComplete() {
         view.hideProgress()
     }
 
-    // simular uma requisição HTTP
-    private fun fakeRequest() {
-        Handler(Looper.getMainLooper()).postDelayed({
-            val response = arrayListOf(
-                "Categoria 1",
-                "Categoria 2",
-                "Categoria 3",
-                "Categoria 4"
-            )
-            // aqui a lista está pronta (response)
-
-            // Devolver sucesso ou falha
-            onSuccess(response)
-//            onError("FALHA MA CONEXÃO, TENTE NOVAMENTE MAIS TARDE!")
-        }, 2000)
-    }
 }
