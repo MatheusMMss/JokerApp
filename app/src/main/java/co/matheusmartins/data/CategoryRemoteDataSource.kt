@@ -2,25 +2,37 @@ package co.matheusmartins.data
 
 import android.os.Handler
 import android.os.Looper
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class CategoryRemoteDataSource {
 
     fun findAllCategories(callback: ListCategoryCallback) {
-        Handler(Looper.getMainLooper()).postDelayed({
-            val response = arrayListOf(
-                "Categoria 1",
-                "Categoria 2",
-                "Categoria 3",
-                "Categoria 4"
-            )
-            // aqui a lista está pronta (response)
+        HTTPClient.retrofit() // instancia do retrofit pronta
+            .create(ChuckNorrisAPI::class.java)
+            .findAllCategories()
+            .enqueue(object : Callback<List<String>> {
+                override fun onResponse(call: Call<List<String>>, response: Response<List<String>>
+                ) {
+                    if (response.isSuccessful) {
+                        val categories = response.body()
+                        callback.onSuccess(categories ?: emptyList())
+                    } else {
+                        // quando servidor devolve status de error < 500
+                        val error = response.errorBody()?.string()
+                        callback.onError(error ?: "Error desconhecido")
+                    }
 
-            // Devolver sucesso ou falha
-            callback.onSuccess(response)
-//            onError("FALHA MA CONEXÃO, TENTE NOVAMENTE MAIS TARDE!")
+                    callback.onComplete()
+                }
 
-            callback.onComplete()
-        }, 2000)
+                override fun onFailure(call: Call<List<String>>, t: Throwable) {
+                    callback.onError(t.message ?: "Erro interno")
+                    callback.onComplete()
+                }
+
+            })
     }
 
 }
