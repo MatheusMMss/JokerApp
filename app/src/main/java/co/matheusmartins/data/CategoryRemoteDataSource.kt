@@ -1,7 +1,5 @@
 package co.matheusmartins.data
 
-import android.os.Handler
-import android.os.Looper
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -13,7 +11,8 @@ class CategoryRemoteDataSource {
             .create(ChuckNorrisAPI::class.java)
             .findAllCategories()
             .enqueue(object : Callback<List<String>> {
-                override fun onResponse(call: Call<List<String>>, response: Response<List<String>>
+                override fun onResponse(
+                    call: Call<List<String>>, response: Response<List<String>>
                 ) {
                     if (response.isSuccessful) {
                         val categories = response.body()
