@@ -1,4 +1,4 @@
-package co.matheusmartins
+package co.matheusmartins.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
