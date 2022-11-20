@@ -26,7 +26,7 @@ class HomePresenter(
     // Output (SUCESSO | FALHA | COMPLETE)
     override fun onSuccess(response: List<String>) {
         val start = 40 // H - matiz
-        val end = 190 // H - matiz
+        val end = 250 // H - matiz
         val diff = (end - start) / response.size
 
         val categories = response.mapIndexed { index, s ->
